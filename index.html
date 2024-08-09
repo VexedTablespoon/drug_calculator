@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication & IV Fluid Expiry Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- iOS specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+    <div class="container">
+        <h1>Medication & IV Fluid Expiry Tracker</h1>
+        <p id="currentDateTime"></p>
+        <div class="tracker">
+            <div class="section">
+                <h2>Medications</h2>
+                <form id="medicationForm">
+                    <label for="medicationName">Medication Name:</label>
+                    <input type="text" id="medicationName" required>
+
+                    <label for="medicationDuration">Duration:</label>
+                    <input type="number" id="medicationDuration" required>
+
+                    <label for="medicationDurationUnit">Duration Unit:</label>
+                    <select id="medicationDurationUnit" required>
+                        <option value="days">Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months">Months</option>
+                    </select>
+
+                    <label for="medicationRemovalDate">Removal Date:</label>
+                    <input type="date" id="medicationRemovalDate" required>
+
+                    <button type="button" onclick="addMedication()">Add Medication</button>
+                </form>
+                <div id="medicationsList"></div>
+            </div>
+            <div class="section">
+                <h2>IV Fluids</h2>
+                <form id="ivFluidForm">
+                    <label for="ivFluidName">IV Fluid Name:</label>
+                    <input type="text" id="ivFluidName" required>
+
+                    <label for="ivFluidDuration">Duration:</label>
+                    <input type="number" id="ivFluidDuration" required>
+
+                    <label for="ivFluidDurationUnit">Duration Unit:</label>
+                    <select id="ivFluidDurationUnit" required>
+                        <option value="days">Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months">Months</option>
+                    </select>
+
+                    <label for="ivFluidWarmDate">Date Added to Warmer:</label>
+                    <input type="date" id="ivFluidWarmDate" required>
+
+                    <button type="button" onclick="addIvFluid()">Add IV Fluid</button>
+                </form>
+                <div id="ivFluidsList"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
