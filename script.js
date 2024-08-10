@@ -18,11 +18,11 @@ function addDrug() {
 
     if (drugName && drugDuration) {
         const expiryDate = calculateExpiryDate(drugRemovalDate, drugDuration, drugDurationUnit);
+        const formattedExpiryDate = formatDate(expiryDate);
         const drugItem = `
             <div class="item">
                 <strong>${drugName}</strong><br>
-                Removal Date: ${drugRemovalDate}<br>
-                Expiry Date: ${expiryDate}<br>
+                Expiry Date: ${formattedExpiryDate}<br>
                 <button onclick="removeItem(this)">Remove</button>
             </div>
         `;
@@ -41,11 +41,11 @@ function addIvFluid() {
 
     if (ivFluidName && ivFluidDuration) {
         const expiryDate = calculateExpiryDate(ivFluidWarmDate, ivFluidDuration, ivFluidDurationUnit);
+        const formattedExpiryDate = formatDate(expiryDate);
         const ivFluidItem = `
             <div class="item">
                 <strong>${ivFluidName}</strong><br>
-                Warm Date: ${ivFluidWarmDate}<br>
-                Expiry Date: ${expiryDate}<br>
+                Expiry Date: ${formattedExpiryDate}<br>
                 <button onclick="removeItem(this)">Remove</button>
             </div>
         `;
@@ -65,7 +65,14 @@ function calculateExpiryDate(startDate, duration, unit) {
     } else if (unit === 'months') {
         date.setMonth(date.getMonth() + parseInt(duration));
     }
-    return date.toISOString().split('T')[0];
+    return date;
+}
+
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
 }
 
 function removeItem(button) {
