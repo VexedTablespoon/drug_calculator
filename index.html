@@ -10,24 +10,24 @@
     <div class="container">
         <h1>Drug & IV Fluid Expiry Calculator</h1>
         <div id="currentDateTime"></div>
-
         <div class="form-section">
             <h2>Drugs</h2>
             <form id="drugForm">
-                <label for="drugName">Drug Name</label>
+                <label for="drugName">Drug Name:</label>
                 <input type="text" id="drugName" name="drugName" required>
 
-                <label for="drugDuration">Duration</label>
+                <label for="drugDuration">Duration:</label>
                 <input type="number" id="drugDuration" name="drugDuration" required>
 
-                <label for="drugDurationUnit">Duration Unit</label>
+                <label for="drugDurationUnit">Duration Unit:</label>
                 <select id="drugDurationUnit" name="drugDurationUnit" required>
+                    <option value="" disabled selected>Select a unit</option>
                     <option value="days">Days</option>
                     <option value="weeks">Weeks</option>
                     <option value="months">Months</option>
                 </select>
 
-                <label for="drugRemovalDate">Removal Date (optional)</label>
+                <label for="drugRemovalDate">Removal Date:</label>
                 <input type="date" id="drugRemovalDate" name="drugRemovalDate">
 
                 <button type="button" onclick="addDrug()">Add Drug</button>
@@ -38,20 +38,21 @@
         <div class="form-section">
             <h2>IV Fluids</h2>
             <form id="ivFluidForm">
-                <label for="ivFluidName">IV Fluid Name</label>
+                <label for="ivFluidName">IV Fluid Name:</label>
                 <input type="text" id="ivFluidName" name="ivFluidName" required>
 
-                <label for="ivFluidDuration">Duration</label>
+                <label for="ivFluidDuration">Duration:</label>
                 <input type="number" id="ivFluidDuration" name="ivFluidDuration" required>
 
-                <label for="ivFluidDurationUnit">Duration Unit</label>
+                <label for="ivFluidDurationUnit">Duration Unit:</label>
                 <select id="ivFluidDurationUnit" name="ivFluidDurationUnit" required>
+                    <option value="" disabled selected>Select a unit</option>
                     <option value="days">Days</option>
                     <option value="weeks">Weeks</option>
                     <option value="months">Months</option>
                 </select>
 
-                <label for="ivFluidWarmDate">Warm Date (optional)</label>
+                <label for="ivFluidWarmDate">Warm Date:</label>
                 <input type="date" id="ivFluidWarmDate" name="ivFluidWarmDate">
 
                 <button type="button" onclick="addIvFluid()">Add IV Fluid</button>
