@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     updateCurrentDateTime();
     setDefaultDateValues();
+    loadStoredItems();
     setInterval(updateCurrentDateTime, 1000);
 });
 
@@ -24,39 +25,24 @@ function addDrug() {
     const drugRemovalDate = document.getElementById("drugRemovalDate").value || new Date().toISOString().split('T')[0];
 
     if (drugName && drugDuration) {
-        const expiryDate = calculateExpiryDate(drugRemovalDate, drugDuration, drugDurationUnit);
-        const formattedExpiryDate = formatDate(expiryDate);
         const drugItem = {
             name: drugName,
-            expiryDate: formattedExpiryDate
+            duration: drugDuration,
+            unit: drugDurationUnit,
+            removalDate: drugRemovalDate
         };
-        addDrugToList(drugItem);
+        storeDrugItem(drugItem);
         document.getElementById("drugName").value = '';
         document.getElementById("drugDuration").value = '';
         document.getElementById("drugRemovalDate").value = new Date().toISOString().split('T')[0];
+        loadStoredItems(); // Refresh the list
     }
 }
 
-function addDrugToList(drugItem) {
-    const drugsList = document.getElementById("drugsList");
-    const drugItems = Array.from(drugsList.children).map(item => ({
-        name: item.querySelector("strong").innerText,
-        expiryDate: item.querySelector(".expiry").innerText
-    }));
-    drugItems.push(drugItem);
-    drugItems.sort((a, b) => a.name.localeCompare(b.name));
-
-    drugsList.innerHTML = '';
-    drugItems.forEach(item => {
-        const drugElement = document.createElement('div');
-        drugElement.classList.add('item');
-        drugElement.innerHTML = `
-            <strong>${item.name}</strong><br>
-            Expiry Date: <span class="expiry">${item.expiryDate}</span><br>
-            <button onclick="removeItem(this)">Remove</button>
-        `;
-        drugsList.appendChild(drugElement);
-    });
+function storeDrugItem(drugItem) {
+    const storedDrugs = JSON.parse(localStorage.getItem("drugsList")) || [];
+    storedDrugs.push(drugItem);
+    localStorage.setItem("drugsList", JSON.stringify(storedDrugs));
 }
 
 function addIvFluid() {
@@ -66,39 +52,24 @@ function addIvFluid() {
     const ivFluidWarmDate = document.getElementById("ivFluidWarmDate").value || new Date().toISOString().split('T')[0];
 
     if (ivFluidName && ivFluidDuration) {
-        const expiryDate = calculateExpiryDate(ivFluidWarmDate, ivFluidDuration, ivFluidDurationUnit);
-        const formattedExpiryDate = formatDate(expiryDate);
         const ivFluidItem = {
             name: ivFluidName,
-            expiryDate: formattedExpiryDate
+            duration: ivFluidDuration,
+            unit: ivFluidDurationUnit,
+            warmDate: ivFluidWarmDate
         };
-        addIvFluidToList(ivFluidItem);
+        storeIvFluidItem(ivFluidItem);
         document.getElementById("ivFluidName").value = '';
         document.getElementById("ivFluidDuration").value = '';
         document.getElementById("ivFluidWarmDate").value = new Date().toISOString().split('T')[0];
+        loadStoredItems(); // Refresh the list
     }
 }
 
-function addIvFluidToList(ivFluidItem) {
-    const ivFluidsList = document.getElementById("ivFluidsList");
-    const ivFluidItems = Array.from(ivFluidsList.children).map(item => ({
-        name: item.querySelector("strong").innerText,
-        expiryDate: item.querySelector(".expiry").innerText
-    }));
-    ivFluidItems.push(ivFluidItem);
-    ivFluidItems.sort((a, b) => a.name.localeCompare(b.name));
-
-    ivFluidsList.innerHTML = '';
-    ivFluidItems.forEach(item => {
-        const ivFluidElement = document.createElement('div');
-        ivFluidElement.classList.add('item');
-        ivFluidElement.innerHTML = `
-            <strong>${item.name}</strong><br>
-            Expiry Date: <span class="expiry">${item.expiryDate}</span><br>
-            <button onclick="removeItem(this)">Remove</button>
-        `;
-        ivFluidsList.appendChild(ivFluidElement);
-    });
+function storeIvFluidItem(ivFluidItem) {
+    const storedIvFluids = JSON.parse(localStorage.getItem("ivFluidsList")) || [];
+    storedIvFluids.push(ivFluidItem);
+    localStorage.setItem("ivFluidsList", JSON.stringify(storedIvFluids));
 }
 
 function calculateExpiryDate(startDate, duration, unit) {
@@ -120,8 +91,72 @@ function formatDate(date) {
     return `${day}-${month}-${year}`;
 }
 
+function loadStoredItems() {
+    const storedDrugs = JSON.parse(localStorage.getItem("drugsList")) || [];
+    document.getElementById("drugsList").innerHTML = '';
+    storedDrugs.forEach(drugItem => addDrugToList(drugItem));
+
+    const storedIvFluids = JSON.parse(localStorage.getItem("ivFluidsList")) || [];
+    document.getElementById("ivFluidsList").innerHTML = '';
+    storedIvFluids.forEach(ivFluidItem => addIvFluidToList(ivFluidItem));
+}
+
+function addDrugToList(drugItem) {
+    const expiryDate = calculateExpiryDate(new Date(), drugItem.duration, drugItem.unit); // Use current date for expiry calculation
+    const formattedExpiryDate = formatDate(expiryDate);
+    const drugElement = document.createElement('div');
+    drugElement.classList.add('item');
+    drugElement.innerHTML = `
+        <strong>${drugItem.name}</strong><br>
+        Expiry Date: <span class="expiry">${formattedExpiryDate}</span><br>
+        <button onclick="removeItem(this)">Remove</button>
+    `;
+    document.getElementById("drugsList").appendChild(drugElement);
+    sortDrugsList();
+}
+
+function addIvFluidToList(ivFluidItem) {
+    const expiryDate = calculateExpiryDate(new Date(), ivFluidItem.duration, ivFluidItem.unit); // Use current date for expiry calculation
+    const formattedExpiryDate = formatDate(expiryDate);
+    const ivFluidElement = document.createElement('div');
+    ivFluidElement.classList.add('item');
+    ivFluidElement.innerHTML = `
+        <strong>${ivFluidItem.name}</strong><br>
+        Expiry Date: <span class="expiry">${formattedExpiryDate}</span><br>
+        <button onclick="removeItem(this)">Remove</button>
+    `;
+    document.getElementById("ivFluidsList").appendChild(ivFluidElement);
+    sortIvFluidsList();
+}
+
+function sortDrugsList() {
+    const drugsList = document.getElementById("drugsList");
+    const drugItems = Array.from(drugsList.children);
+    drugItems.sort((a, b) => a.querySelector("strong").innerText.localeCompare(b.querySelector("strong").innerText));
+    drugsList.innerHTML = '';
+    drugItems.forEach(item => drugsList.appendChild(item));
+}
+
+function sortIvFluidsList() {
+    const ivFluidsList = document.getElementById("ivFluidsList");
+    const ivFluidItems = Array.from(ivFluidsList.children);
+    ivFluidItems.sort((a, b) => a.querySelector("strong").innerText.localeCompare(b.querySelector("strong").innerText));
+    ivFluidsList.innerHTML = '';
+    ivFluidItems.forEach(item => ivFluidsList.appendChild(item));
+}
+
 function removeItem(button) {
     if (confirm('Are you sure you want to remove this item?')) {
-        button.parentElement.remove();
+        const itemElement = button.parentElement;
+        const itemName = itemElement.querySelector("strong").innerText;
+        const drugsList = JSON.parse(localStorage.getItem("drugsList")) || [];
+        const updatedDrugsList = drugsList.filter(drug => drug.name !== itemName);
+        localStorage.setItem("drugsList", JSON.stringify(updatedDrugsList));
+
+        const ivFluidsList = JSON.parse(localStorage.getItem("ivFluidsList")) || [];
+        const updatedIvFluidsList = ivFluidsList.filter(ivFluid => ivFluid.name !== itemName);
+        localStorage.setItem("ivFluidsList", JSON.stringify(updatedIvFluidsList));
+
+        itemElement.remove();
     }
 }
