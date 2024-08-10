@@ -20,6 +20,10 @@ body {
 h1 {
     margin-bottom: 20px;
     text-align: center;
+    font-size: 2em; /* Increase font size for better visibility */
+    white-space: nowrap; /* Prevent title from wrapping or getting cropped */
+    overflow: hidden; /* Ensure it doesn't overflow out of the container */
+    text-overflow: ellipsis; /* Show ellipsis if the text is too long */
 }
 
 p {
