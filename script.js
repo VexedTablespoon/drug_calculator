@@ -1,175 +1,75 @@
-document.addEventListener('DOMContentLoaded', () => {
-    updateDateTime();
-    setDefaultDates();
-    updateMedicationsList();
-    updateIvFluidsList();
-    setInterval(updateDateTime, 1000); // Update time every second
+document.addEventListener("DOMContentLoaded", () => {
+    updateCurrentDateTime();
+    setInterval(updateCurrentDateTime, 1000);
 });
 
-function updateDateTime() {
-    const currentDateTimeElement = document.getElementById('currentDateTime');
+function updateCurrentDateTime() {
     const now = new Date();
-    const date = now.toDateString();
-    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-    currentDateTimeElement.textContent = `Current Date & Time: ${date} ${time}`;
+    const formattedDate = now.toLocaleDateString('en-GB');
+    const formattedTime = now.toLocaleTimeString('en-GB', { hour12: false });
+    document.getElementById('currentDateTime').innerText = `${formattedDate} ${formattedTime}`;
 }
 
-function setDefaultDates() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('medicationRemovalDate').value = today;
-    document.getElementById('ivFluidWarmDate').value = today;
-}
+function addDrug() {
+    const drugName = document.getElementById("drugName").value.trim();
+    const drugDuration = document.getElementById("drugDuration").value;
+    const drugDurationUnit = document.getElementById("drugDurationUnit").value;
+    const drugRemovalDate = document.getElementById("drugRemovalDate").value || new Date().toISOString().split('T')[0];
 
-function addMedication() {
-    const medicationName = document.getElementById('medicationName').value;
-    const duration = parseInt(document.getElementById('medicationDuration').value);
-    const durationUnit = document.getElementById('medicationDurationUnit').value;
-    const removalDate = new Date(document.getElementById('medicationRemovalDate').value);
-    
-    if (isNaN(duration) || !removalDate) {
-        alert('Please fill out all fields correctly.');
-        return;
-    }
-
-    const medications = getMedications();
-    medications.push({
-        name: medicationName,
-        duration: duration,
-        durationUnit: durationUnit,
-        removalDate: removalDate.toISOString(),
-    });
-    // Sort medications alphabetically
-    medications.sort((a, b) => a.name.localeCompare(b.name));
-    localStorage.setItem('medications', JSON.stringify(medications));
-
-    updateMedicationsList();
-    clearMedicationForm();
-}
-
-function getMedications() {
-    const medications = localStorage.getItem('medications');
-    return medications ? JSON.parse(medications) : [];
-}
-
-function removeMedication(index) {
-    if (confirm('Are you sure you want to remove this medication?')) {
-        const medications = getMedications();
-        medications.splice(index, 1);
-        localStorage.setItem('medications', JSON.stringify(medications));
-        updateMedicationsList();
-    }
-}
-
-function updateMedicationsList() {
-    const medications = getMedications();
-    const medicationsList = document.getElementById('medicationsList');
-    medicationsList.innerHTML = '';
-
-    medications.forEach((medication, index) => {
-        const currentDate = new Date();
-        let expiryDate = new Date(medication.removalDate);
-
-        if (medication.durationUnit === 'days') {
-            expiryDate.setDate(currentDate.getDate() + medication.duration);
-        } else if (medication.durationUnit === 'weeks') {
-            expiryDate.setDate(currentDate.getDate() + medication.duration * 7);
-        } else if (medication.durationUnit === 'months') {
-            expiryDate.setMonth(currentDate.getMonth() + medication.duration);
-        }
-
-        const daysLeft = Math.ceil((expiryDate - currentDate) / (1000 * 60 * 60 * 24));
-
-        const medicationItem = document.createElement('div');
-        medicationItem.className = 'item';
-        medicationItem.innerHTML = `
-            <p>Medication: <strong>${medication.name}</strong></p>
-            <p>Expiry Date: <strong>${expiryDate.toDateString()}</strong> (${daysLeft} days left)</p>
-            <button onclick="removeMedication(${index})">Remove</button>
+    if (drugName && drugDuration) {
+        const expiryDate = calculateExpiryDate(drugRemovalDate, drugDuration, drugDurationUnit);
+        const drugItem = `
+            <div class="item">
+                <strong>${drugName}</strong><br>
+                Removal Date: ${drugRemovalDate}<br>
+                Expiry Date: ${expiryDate}<br>
+                <button onclick="removeItem(this)">Remove</button>
+            </div>
         `;
-        medicationsList.appendChild(medicationItem);
-    });
-}
-
-function clearMedicationForm() {
-    document.getElementById('medicationName').value = '';
-    document.getElementById('medicationDuration').value = '';
-    document.getElementById('medicationDurationUnit').value = 'days';
-    document.getElementById('medicationRemovalDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById("drugsList").insertAdjacentHTML('beforeend', drugItem);
+        document.getElementById("drugName").value = '';
+        document.getElementById("drugDuration").value = '';
+        document.getElementById("drugRemovalDate").value = '';
+    }
 }
 
 function addIvFluid() {
-    const ivFluidName = document.getElementById('ivFluidName').value;
-    const duration = parseInt(document.getElementById('ivFluidDuration').value);
-    const durationUnit = document.getElementById('ivFluidDurationUnit').value;
-    const warmDate = new Date(document.getElementById('ivFluidWarmDate').value);
-    
-    if (isNaN(duration) || !warmDate) {
-        alert('Please fill out all fields correctly.');
-        return;
-    }
+    const ivFluidName = document.getElementById("ivFluidName").value.trim();
+    const ivFluidDuration = document.getElementById("ivFluidDuration").value;
+    const ivFluidDurationUnit = document.getElementById("ivFluidDurationUnit").value;
+    const ivFluidWarmDate = document.getElementById("ivFluidWarmDate").value || new Date().toISOString().split('T')[0];
 
-    const ivFluids = getIvFluids();
-    ivFluids.push({
-        name: ivFluidName,
-        duration: duration,
-        durationUnit: durationUnit,
-        warmDate: warmDate.toISOString(),
-    });
-    // Sort IV fluids alphabetically
-    ivFluids.sort((a, b) => a.name.localeCompare(b.name));
-    localStorage.setItem('ivFluids', JSON.stringify(ivFluids));
-
-    updateIvFluidsList();
-    clearIvFluidForm();
-}
-
-function getIvFluids() {
-    const ivFluids = localStorage.getItem('ivFluids');
-    return ivFluids ? JSON.parse(ivFluids) : [];
-}
-
-function removeIvFluid(index) {
-    if (confirm('Are you sure you want to remove this IV fluid?')) {
-        const ivFluids = getIvFluids();
-        ivFluids.splice(index, 1);
-        localStorage.setItem('ivFluids', JSON.stringify(ivFluids));
-        updateIvFluidsList();
-    }
-}
-
-function updateIvFluidsList() {
-    const ivFluids = getIvFluids();
-    const ivFluidsList = document.getElementById('ivFluidsList');
-    ivFluidsList.innerHTML = '';
-
-    ivFluids.forEach((ivFluid, index) => {
-        const currentDate = new Date();
-        let expiryDate = new Date(ivFluid.warmDate);
-
-        if (ivFluid.durationUnit === 'days') {
-            expiryDate.setDate(currentDate.getDate() + ivFluid.duration);
-        } else if (ivFluid.durationUnit === 'weeks') {
-            expiryDate.setDate(currentDate.getDate() + ivFluid.duration * 7);
-        } else if (ivFluid.durationUnit === 'months') {
-            expiryDate.setMonth(currentDate.getMonth() + ivFluid.duration);
-        }
-
-        const daysLeft = Math.ceil((expiryDate - currentDate) / (1000 * 60 * 60 * 24));
-
-        const ivFluidItem = document.createElement('div');
-        ivFluidItem.className = 'item';
-        ivFluidItem.innerHTML = `
-            <p>IV Fluid: <strong>${ivFluid.name}</strong></p>
-            <p>Expiry Date: <strong>${expiryDate.toDateString()}</strong> (${daysLeft} days left)</p>
-            <button onclick="removeIvFluid(${index})">Remove</button>
+    if (ivFluidName && ivFluidDuration) {
+        const expiryDate = calculateExpiryDate(ivFluidWarmDate, ivFluidDuration, ivFluidDurationUnit);
+        const ivFluidItem = `
+            <div class="item">
+                <strong>${ivFluidName}</strong><br>
+                Warm Date: ${ivFluidWarmDate}<br>
+                Expiry Date: ${expiryDate}<br>
+                <button onclick="removeItem(this)">Remove</button>
+            </div>
         `;
-        ivFluidsList.appendChild(ivFluidItem);
-    });
+        document.getElementById("ivFluidsList").insertAdjacentHTML('beforeend', ivFluidItem);
+        document.getElementById("ivFluidName").value = '';
+        document.getElementById("ivFluidDuration").value = '';
+        document.getElementById("ivFluidWarmDate").value = '';
+    }
 }
 
-function clearIvFluidForm() {
-    document.getElementById('ivFluidName').value = '';
-    document.getElementById('ivFluidDuration').value = '';
-    document.getElementById('ivFluidDurationUnit').value = 'days';
-    document.getElementById('ivFluidWarmDate').value = new Date().toISOString().split('T')[0];
+function calculateExpiryDate(startDate, duration, unit) {
+    const date = new Date(startDate);
+    if (unit === 'days') {
+        date.setDate(date.getDate() + parseInt(duration));
+    } else if (unit === 'weeks') {
+        date.setDate(date.getDate() + parseInt(duration) * 7);
+    } else if (unit === 'months') {
+        date.setMonth(date.getMonth() + parseInt(duration));
+    }
+    return date.toISOString().split('T')[0];
+}
+
+function removeItem(button) {
+    if (confirm('Are you sure you want to remove this item?')) {
+        button.parentElement.remove();
+    }
 }

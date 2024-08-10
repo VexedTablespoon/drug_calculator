@@ -26,14 +26,16 @@ p {
     text-align: center;
 }
 
-.tracker {
+.content {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .section {
     flex: 1;
     margin: 0 10px;
+    min-width: 300px;
 }
 
 form label {
@@ -49,9 +51,10 @@ form input, form select, form button {
     border-radius: 4px;
 }
 
-#currentDate {
+#currentDateTime {
     margin-bottom: 20px;
     font-size: 16px;
+    text-align: center;
 }
 
 .item {
