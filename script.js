@@ -26,18 +26,37 @@ function addDrug() {
     if (drugName && drugDuration) {
         const expiryDate = calculateExpiryDate(drugRemovalDate, drugDuration, drugDurationUnit);
         const formattedExpiryDate = formatDate(expiryDate);
-        const drugItem = `
-            <div class="item">
-                <strong>${drugName}</strong><br>
-                Expiry Date: ${formattedExpiryDate}<br>
-                <button onclick="removeItem(this)">Remove</button>
-            </div>
-        `;
-        document.getElementById("drugsList").insertAdjacentHTML('beforeend', drugItem);
+        const drugItem = {
+            name: drugName,
+            expiryDate: formattedExpiryDate
+        };
+        addDrugToList(drugItem);
         document.getElementById("drugName").value = '';
         document.getElementById("drugDuration").value = '';
         document.getElementById("drugRemovalDate").value = new Date().toISOString().split('T')[0];
     }
+}
+
+function addDrugToList(drugItem) {
+    const drugsList = document.getElementById("drugsList");
+    const drugItems = Array.from(drugsList.children).map(item => ({
+        name: item.querySelector("strong").innerText,
+        expiryDate: item.querySelector(".expiry").innerText
+    }));
+    drugItems.push(drugItem);
+    drugItems.sort((a, b) => a.name.localeCompare(b.name));
+
+    drugsList.innerHTML = '';
+    drugItems.forEach(item => {
+        const drugElement = document.createElement('div');
+        drugElement.classList.add('item');
+        drugElement.innerHTML = `
+            <strong>${item.name}</strong><br>
+            Expiry Date: <span class="expiry">${item.expiryDate}</span><br>
+            <button onclick="removeItem(this)">Remove</button>
+        `;
+        drugsList.appendChild(drugElement);
+    });
 }
 
 function addIvFluid() {
@@ -49,18 +68,37 @@ function addIvFluid() {
     if (ivFluidName && ivFluidDuration) {
         const expiryDate = calculateExpiryDate(ivFluidWarmDate, ivFluidDuration, ivFluidDurationUnit);
         const formattedExpiryDate = formatDate(expiryDate);
-        const ivFluidItem = `
-            <div class="item">
-                <strong>${ivFluidName}</strong><br>
-                Expiry Date: ${formattedExpiryDate}<br>
-                <button onclick="removeItem(this)">Remove</button>
-            </div>
-        `;
-        document.getElementById("ivFluidsList").insertAdjacentHTML('beforeend', ivFluidItem);
+        const ivFluidItem = {
+            name: ivFluidName,
+            expiryDate: formattedExpiryDate
+        };
+        addIvFluidToList(ivFluidItem);
         document.getElementById("ivFluidName").value = '';
         document.getElementById("ivFluidDuration").value = '';
         document.getElementById("ivFluidWarmDate").value = new Date().toISOString().split('T')[0];
     }
+}
+
+function addIvFluidToList(ivFluidItem) {
+    const ivFluidsList = document.getElementById("ivFluidsList");
+    const ivFluidItems = Array.from(ivFluidsList.children).map(item => ({
+        name: item.querySelector("strong").innerText,
+        expiryDate: item.querySelector(".expiry").innerText
+    }));
+    ivFluidItems.push(ivFluidItem);
+    ivFluidItems.sort((a, b) => a.name.localeCompare(b.name));
+
+    ivFluidsList.innerHTML = '';
+    ivFluidItems.forEach(item => {
+        const ivFluidElement = document.createElement('div');
+        ivFluidElement.classList.add('item');
+        ivFluidElement.innerHTML = `
+            <strong>${item.name}</strong><br>
+            Expiry Date: <span class="expiry">${item.expiryDate}</span><br>
+            <button onclick="removeItem(this)">Remove</button>
+        `;
+        ivFluidsList.appendChild(ivFluidElement);
+    });
 }
 
 function calculateExpiryDate(startDate, duration, unit) {
