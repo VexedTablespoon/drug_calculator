@@ -60,6 +60,19 @@ form label {
     margin-bottom: 5px;
 }
 
+.duration-container {
+    display: flex;
+    gap: 10px; /* Space between the number input and the dropdown */
+}
+
+.duration-container input[type="number"] {
+    flex: 1; /* Make the input field flexible */
+}
+
+.duration-container select {
+    flex: 1.5; /* Adjust flexibility of the select box */
+}
+
 form input, form select, form button {
     width: 100%;
     padding: 8px;
