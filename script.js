@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     updateCurrentDateTime();
+    setDefaultDateValues();
     setInterval(updateCurrentDateTime, 1000);
 });
 
@@ -8,6 +9,12 @@ function updateCurrentDateTime() {
     const formattedDate = now.toLocaleDateString('en-GB');
     const formattedTime = now.toLocaleTimeString('en-GB', { hour12: false });
     document.getElementById('currentDateTime').innerText = `${formattedDate} ${formattedTime}`;
+}
+
+function setDefaultDateValues() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("drugRemovalDate").value = today;
+    document.getElementById("ivFluidWarmDate").value = today;
 }
 
 function addDrug() {
@@ -29,7 +36,7 @@ function addDrug() {
         document.getElementById("drugsList").insertAdjacentHTML('beforeend', drugItem);
         document.getElementById("drugName").value = '';
         document.getElementById("drugDuration").value = '';
-        document.getElementById("drugRemovalDate").value = '';
+        document.getElementById("drugRemovalDate").value = new Date().toISOString().split('T')[0];
     }
 }
 
@@ -52,7 +59,7 @@ function addIvFluid() {
         document.getElementById("ivFluidsList").insertAdjacentHTML('beforeend', ivFluidItem);
         document.getElementById("ivFluidName").value = '';
         document.getElementById("ivFluidDuration").value = '';
-        document.getElementById("ivFluidWarmDate").value = '';
+        document.getElementById("ivFluidWarmDate").value = new Date().toISOString().split('T')[0];
     }
 }
 
@@ -72,7 +79,7 @@ function formatDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${day}-${month}-${year}`;
 }
 
 function removeItem(button) {
