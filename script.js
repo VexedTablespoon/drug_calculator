@@ -13,13 +13,19 @@ function updateCurrentDateTime() {
 
 function loadStoredItems() {
     const storedDrugs = JSON.parse(localStorage.getItem("drugsList")) || [];
+    const storedIvFluids = JSON.parse(localStorage.getItem("ivFluidsList")) || [];
+
+    // Sort drugs and fluids alphabetically
+    storedDrugs.sort((a, b) => a.name.localeCompare(b.name));
+    storedIvFluids.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Clear and repopulate lists
     document.getElementById("drugsList").innerHTML = '';
     storedDrugs.forEach(drugItem => {
         const expiryDate = calculateExpiryDate(new Date(), drugItem.duration, drugItem.unit);
         addDrugToList(drugItem, expiryDate);
     });
 
-    const storedIvFluids = JSON.parse(localStorage.getItem("ivFluidsList")) || [];
     document.getElementById("ivFluidsList").innerHTML = '';
     storedIvFluids.forEach(ivFluidItem => {
         const expiryDate = calculateExpiryDate(new Date(), ivFluidItem.duration, ivFluidItem.unit);
@@ -43,16 +49,20 @@ function addDrug() {
     const drugName = document.getElementById("drugName").value.trim();
     const drugDuration = document.getElementById("drugDuration").value;
     const drugDurationUnit = document.getElementById("drugDurationUnit").value;
+    const drugRemovalDate = document.getElementById("drugRemovalDate").value || new Date().toISOString().split('T')[0];
 
-    if (drugName && drugDuration) {
+    if (drugName && drugDuration && drugDurationUnit) {
         const drugItem = {
             name: drugName,
             duration: drugDuration,
-            unit: drugDurationUnit
+            unit: drugDurationUnit,
+            removalDate: drugRemovalDate
         };
         storeDrugItem(drugItem);
         document.getElementById("drugName").value = '';
         document.getElementById("drugDuration").value = '';
+        document.getElementById("drugDurationUnit").value = '';
+        document.getElementById("drugRemovalDate").value = '';
         loadStoredItems(); // Refresh the list
     }
 }
@@ -73,16 +83,20 @@ function addIvFluid() {
     const ivFluidName = document.getElementById("ivFluidName").value.trim();
     const ivFluidDuration = document.getElementById("ivFluidDuration").value;
     const ivFluidDurationUnit = document.getElementById("ivFluidDurationUnit").value;
+    const ivFluidWarmDate = document.getElementById("ivFluidWarmDate").value || new Date().toISOString().split('T')[0];
 
-    if (ivFluidName && ivFluidDuration) {
+    if (ivFluidName && ivFluidDuration && ivFluidDurationUnit) {
         const ivFluidItem = {
             name: ivFluidName,
             duration: ivFluidDuration,
-            unit: ivFluidDurationUnit
+            unit: ivFluidDurationUnit,
+            warmDate: ivFluidWarmDate
         };
         storeIvFluidItem(ivFluidItem);
         document.getElementById("ivFluidName").value = '';
         document.getElementById("ivFluidDuration").value = '';
+        document.getElementById("ivFluidDurationUnit").value = '';
+        document.getElementById("ivFluidWarmDate").value = '';
         loadStoredItems(); // Refresh the list
     }
 }
@@ -119,17 +133,18 @@ function storeIvFluidItem(ivFluidItem) {
 }
 
 function removeItem(button) {
-    if (confirm('Are you sure you want to remove this item?')) {
-        const itemElement = button.parentElement;
-        const itemName = itemElement.querySelector("strong").innerText;
-        let storedDrugs = JSON.parse(localStorage.getItem("drugsList")) || [];
-        let storedIvFluids = JSON.parse(localStorage.getItem("ivFluidsList")) || [];
+    const itemElement = button.parentElement;
+    const itemName = itemElement.querySelector("strong").innerText;
+    const isDrug = itemElement.closest('#drugsList') !== null;
 
-        storedDrugs = storedDrugs.filter(drug => drug.name !== itemName);
-        storedIvFluids = storedIvFluids.filter(ivFluid => ivFluid.name !== itemName);
+    const itemType = isDrug ? 'drug' : 'fluid';
+    if (confirm(`Are you sure you want to remove this ${itemType}?`)) {
+        let storedList = isDrug 
+            ? JSON.parse(localStorage.getItem("drugsList")) || [] 
+            : JSON.parse(localStorage.getItem("ivFluidsList")) || [];
 
-        localStorage.setItem("drugsList", JSON.stringify(storedDrugs));
-        localStorage.setItem("ivFluidsList", JSON.stringify(storedIvFluids));
+        storedList = storedList.filter(item => item.name !== itemName);
+        localStorage.setItem(isDrug ? "drugsList" : "ivFluidsList", JSON.stringify(storedList));
 
         itemElement.remove();
     }

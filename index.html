@@ -22,11 +22,14 @@
                     <input type="text" id="drugName" required>
                     <label for="drugDuration">Stability Duration:</label>
                     <input type="number" id="drugDuration" required>
-                    <select id="drugDurationUnit">
+                    <select id="drugDurationUnit" required>
+                        <option value="" disabled selected>Select Duration</option>
                         <option value="days">Days</option>
                         <option value="weeks">Weeks</option>
                         <option value="months">Months</option>
                     </select>
+                    <label for="drugRemovalDate">Removal Date (optional):</label>
+                    <input type="date" id="drugRemovalDate">
                     <button type="submit">Add Drug</button>
                 </form>
                 <div id="drugsList"></div>
@@ -38,11 +41,14 @@
                     <input type="text" id="ivFluidName" required>
                     <label for="ivFluidDuration">Stability Duration:</label>
                     <input type="number" id="ivFluidDuration" required>
-                    <select id="ivFluidDurationUnit">
+                    <select id="ivFluidDurationUnit" required>
+                        <option value="" disabled selected>Select Duration</option>
                         <option value="days">Days</option>
                         <option value="weeks">Weeks</option>
                         <option value="months">Months</option>
                     </select>
+                    <label for="ivFluidWarmDate">Addition to Warmer Date (optional):</label>
+                    <input type="date" id="ivFluidWarmDate">
                     <button type="submit">Add IV Fluid</button>
                 </form>
                 <div id="ivFluidsList"></div>
