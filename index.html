@@ -2,66 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drug & IV Fluid Expiry Calculator</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Drug & IV Fluid Expiry Calculator</h1>
-            <div id="currentDateTime"></div>
-        </header>
-        <div class="content">
-            <div class="section">
-                <h2>Drugs</h2>
-                <form onsubmit="addDrug(); return false;">
-                    <label for="drugName">Drug Name:</label>
-                    <input type="text" id="drugName" required>
-                    <label for="drugDuration">Duration:</label>
-                    <input type="number" id="drugDuration" required>
-                    <select id="drugDurationUnit">
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                    </select>
-                    <label for="drugRemovalDate">Removal Date:</label>
-                    <input type="date" id="drugRemovalDate">
-                    <button type="submit">Add Drug</button>
-                </form>
-                <div id="drugsList"></div>
-            </div>
-            <div class="section">
-                <h2>IV Fluids</h2>
-                <form onsubmit="addIvFluid(); return false;">
-                    <label for="ivFluidName">IV Fluid Name:</label>
-                    <input type="text" id="ivFluidName" required>
-                    <label for="ivFluidDuration">Duration:</label>
-                    <input type="number" id="ivFluidDuration" required>
-                    <select id="ivFluidDurationUnit">
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                    </select>
-                    <label for="ivFluidWarmDate">Warm Date:</label>
-                    <input type="date" id="ivFluidWarmDate">
-                    <button type="submit">Add IV Fluid</button>
-                </form>
-                <div id="ivFluidsList"></div>
-            </div>
+        <h1>Drug & IV Fluid Expiry Calculator</h1>
+        <div id="currentDateTime"></div>
+        <div class="form-section">
+            <form id="drugForm">
+                <label for="drugName">Drug Name</label>
+                <input type="text" id="drugName" name="drugName" required>
+
+                <label for="drugDuration">Duration</label>
+                <input type="number" id="drugDuration" name="drugDuration" required>
+
+                <label for="drugDurationUnit">Duration Unit</label>
+                <select id="drugDurationUnit" name="drugDurationUnit" required>
+                    <option value="days">Days</option>
+                    <option value="weeks">Weeks</option>
+                    <option value="months">Months</option>
+                </select>
+
+                <label for="drugRemovalDate">Removal Date (optional)</label>
+                <input type="date" id="drugRemovalDate" name="drugRemovalDate">
+
+                <button type="button" onclick="addDrug()">Add Drug</button>
+            </form>
+            <div id="drugsList"></div>
+        </div>
+
+        <div class="form-section">
+            <form id="ivFluidForm">
+                <label for="ivFluidName">IV Fluid Name</label>
+                <input type="text" id="ivFluidName" name="ivFluidName" required>
+
+                <label for="ivFluidDuration">Duration</label>
+                <input type="number" id="ivFluidDuration" name="ivFluidDuration" required>
+
+                <label for="ivFluidDurationUnit">Duration Unit</label>
+                <select id="ivFluidDurationUnit" name="ivFluidDurationUnit" required>
+                    <option value="days">Days</option>
+                    <option value="weeks">Weeks</option>
+                    <option value="months">Months</option>
+                </select>
+
+                <label for="ivFluidWarmDate">Warm Date (optional)</label>
+                <input type="date" id="ivFluidWarmDate" name="ivFluidWarmDate">
+
+                <button type="button" onclick="addIvFluid()">Add IV Fluid</button>
+            </form>
+            <div id="ivFluidsList"></div>
         </div>
     </div>
     <script src="script.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, function(error) {
-                    console.log('ServiceWorker registration failed: ', error);
-                });
-        }
-    </script>
 </body>
 </html>
