@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drug & IV Fluid Expiry Calculator</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
     <div class="container">
@@ -15,10 +19,8 @@
             <form id="drugForm">
                 <label for="drugName">Drug Name:</label>
                 <input type="text" id="drugName" name="drugName" required>
-
                 <label for="drugDuration">Duration:</label>
                 <input type="number" id="drugDuration" name="drugDuration" required>
-
                 <label for="drugDurationUnit">Duration Unit:</label>
                 <select id="drugDurationUnit" name="drugDurationUnit" required>
                     <option value="" disabled selected>Select a unit</option>
@@ -26,24 +28,19 @@
                     <option value="weeks">Weeks</option>
                     <option value="months">Months</option>
                 </select>
-
                 <label for="drugRemovalDate">Removal Date:</label>
                 <input type="date" id="drugRemovalDate" name="drugRemovalDate">
-
-                <button type="button" onclick="addDrug()">Add Drug</button>
+                <button type="submit">Add Drug</button>
             </form>
             <div id="drugsList"></div>
         </div>
-
         <div class="form-section">
             <h2>IV Fluids</h2>
             <form id="ivFluidForm">
                 <label for="ivFluidName">IV Fluid Name:</label>
                 <input type="text" id="ivFluidName" name="ivFluidName" required>
-
                 <label for="ivFluidDuration">Duration:</label>
                 <input type="number" id="ivFluidDuration" name="ivFluidDuration" required>
-
                 <label for="ivFluidDurationUnit">Duration Unit:</label>
                 <select id="ivFluidDurationUnit" name="ivFluidDurationUnit" required>
                     <option value="" disabled selected>Select a unit</option>
@@ -51,11 +48,9 @@
                     <option value="weeks">Weeks</option>
                     <option value="months">Months</option>
                 </select>
-
                 <label for="ivFluidWarmDate">Warm Date:</label>
                 <input type="date" id="ivFluidWarmDate" name="ivFluidWarmDate">
-
-                <button type="button" onclick="addIvFluid()">Add IV Fluid</button>
+                <button type="submit">Add IV Fluid</button>
             </form>
             <div id="ivFluidsList"></div>
         </div>
